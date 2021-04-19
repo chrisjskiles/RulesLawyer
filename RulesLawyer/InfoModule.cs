@@ -19,6 +19,7 @@ namespace RulesLawyer
         }
 
         [Command("help")]
+        [Summary("You just used this command")]
         public async Task Help(string cmdName = null)
         {
             var commands = _commandService.Commands.ToList();
