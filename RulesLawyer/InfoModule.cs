@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 namespace RulesLawyer
 {
@@ -48,37 +49,102 @@ namespace RulesLawyer
             await ReplyAsync(embed: embed.Build());
         }
 
+        //This doesn't work cuz app.config is read only. User settings might be able to be used here 
+        //
+        //[Command("changewake")]
+        //[Alias("cw")]
+        //[Summary("Sets the wake word to the given argument")]
+        //public async Task ChangeWakeChar(string s)
+        //{
+        //    var settings = ConfigurationManager.AppSettings;
+
+        //    var wakeWordKey = $"WakeWord_{Context.Guild.Id}";
+
+        //    if (settings.AllKeys.Contains(wakeWordKey))
+        //        settings.Set(wakeWordKey, s);
+
+        //    else
+        //        settings.Add(wakeWordKey, s);
+
+        //    await ReplyAsync("Wake word updated");
+        //}
+
 
         [Command("condition")]
         [Alias("cond", "c")]
         [Summary("Posts description of the given condition, or if no arg is given, a list of all conditions")]
-        public async Task ConditionAsync(string condName = null)
+        public async Task ConditionAsync(params string[] args)
         {
-            var embed = new EmbedBuilder();
+            var response = new EmbedBuilder();
 
-            if (condName is null)
+            if (args.Count() == 0)
             {
                 var allConditions = await Db.Conditions.AsQueryable().Select(_ => _.Name).ToListAsync();
 
                 var text = string.Join(", ", allConditions);
 
-                embed.WithTitle("List of Conditions")
+                response.WithTitle("List of Conditions")
                     .WithDescription(text);
             }
 
             else
             {
+                var condName = string.Join(' ', args);
                 var condition = await Db.Conditions.AsQueryable().SingleOrDefaultAsync(_ => _.Name.ToLower() == condName.ToLower());
 
                 if (condition is object)
-                    embed.WithTitle(condition.Name)
+                    response
+                        .WithTitle(condition.Name)
                         .WithDescription(condition.Description);
 
                 else
-                    embed.WithTitle("No condition found with that name");
+                    response.WithTitle("No condition found with that name");
             }
 
-            await ReplyAsync(embed: embed.Build());
+            await ReplyAsync(embed: response.Build());
+        }
+
+        [Command("action")]
+        [Alias("act", "a")]
+        [Summary("Posts information about the given action")]
+        public async Task ActionAsync(params string[] args)
+        {
+            var response = new EmbedBuilder()
+                    .WithFooter("Some actions are not available yet");
+
+            if (args.Count() == 0)
+            {
+                var allActions = await Db.Actions.AsQueryable().Select(_ => _.Name).ToListAsync();
+
+                var text = string.Join(", ", allActions);
+
+                response
+                    .WithTitle("List of Available Actions")
+                    .WithDescription(text);
+            }
+
+            else
+            {
+                var actionName = string.Join(' ', args);
+                var action = await Db.Actions.AsQueryable().SingleOrDefaultAsync(_ => _.Name.ToLower() == actionName.ToLower());
+
+                if (action is object)
+                {
+                    var description = EmbedHelper.GetActionHeader(action);
+
+                    response
+                        .WithTitle(EmbedHelper.GetActionTitle(action)) 
+                        .WithDescription(EmbedHelper.GetActionHeader(action))
+                        .WithFields(EmbedHelper.GetActionFields(action));
+                    //EmbedHelper.AddActionFields(ref response, action); 
+                }
+
+                else
+                    response
+                        .WithTitle("No action found with that name");
+            }
+
+            await ReplyAsync(embed: response.Build());
         }
     }
 }

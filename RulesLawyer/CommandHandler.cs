@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 
 namespace RulesLawyer
@@ -34,9 +35,10 @@ namespace RulesLawyer
         {
             int argPos = 0;
             var msg = sockMsg as SocketUserMessage;
+            var wakeSymbol = ConfigurationManager.AppSettings.Get("WakeSymbol");
 
             if (msg is null ||
-                !(msg.HasCharPrefix('&', ref argPos)) ||
+                !(msg.HasStringPrefix(wakeSymbol, ref argPos)) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos) ||
                 msg.Author.IsBot)
                 return;
