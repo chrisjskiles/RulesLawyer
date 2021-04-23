@@ -79,7 +79,7 @@ namespace RulesLawyer
 
             if (args.Count() == 0)
             {
-                var allConditions = await Db.Conditions.AsQueryable().Select(_ => _.Name).ToListAsync();
+                var allConditions = await Db.Conditions.AsQueryable().Select(_ => _.Name).OrderBy(_ => _).ToListAsync();
 
                 var text = string.Join(", ", allConditions);
 
@@ -114,7 +114,7 @@ namespace RulesLawyer
 
             if (args.Count() == 0)
             {
-                var allActions = await Db.Actions.AsQueryable().Select(_ => _.Name).ToListAsync();
+                var allActions = await Db.Actions.AsQueryable().Select(_ => _.Name).OrderBy(_ => _).ToListAsync();
 
                 var text = string.Join(", ", allActions);
 

@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <None Update="PF2Rules.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -24,8 +24,7 @@ namespace RulesLawyer
             {
                 description += Environment.NewLine +
                     @$"The description of this action is literally too long to fit 
-                    in this field. I'm working on a solution but for now [here's a link]
-                    (http://2e.aonprd.com/Actions.aspx?ID={action.Id})";
+                    in this field. I'm working on a solution but for now [here's a link](http://2e.aonprd.com/Actions.aspx?ID={action.Id})";
             }
             
             else 
