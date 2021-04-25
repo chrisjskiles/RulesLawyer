@@ -34,14 +34,14 @@ namespace RulesLawyer
                 {
                     var summary = command.Summary ?? "No description available\n";
 
-                    embed.AddField(command.Name, summary);
+                    embed.AddField(string.Join(", ", command.Aliases), summary);
                 }
 
             else
             {
-                var command = commands.Where(_ => _.Name == cmdName).FirstOrDefault();
+                var command = commands.Where(_ => _.Name == cmdName || _.Aliases.Contains(cmdName)).FirstOrDefault();
 
-                if (command is object) embed.AddField(command.Name, command.Summary ?? "No description available");
+                if (command is object) embed.AddField(string.Join(", ", command.Aliases), command.Summary ?? "No description available");
 
                 else embed.WithTitle("No commands found with that name");
             }
